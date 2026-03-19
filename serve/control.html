@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>大棚远程控制</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;max-width:720px;margin:24px auto;padding:0 16px}
+    button{padding:10px 14px;margin:6px 6px 6px 0}
+    .row{margin:10px 0}
+    pre{background:#111;color:#0f0;padding:12px;overflow:auto}
+  </style>
+</head>
+<body>
+  <h2>大棚远程控制（最简版）</h2>
+
+  <div class="row">
+    <strong>蜂鸣器</strong><br/>
+    <button onclick="sendCmd({buzzer_override:1,buzzer_mode:1})">连续响</button>
+    <button onclick="sendCmd({buzzer_override:1,buzzer_mode:2})">间歇响</button>
+    <button onclick="sendCmd({buzzer_override:1,buzzer_mode:0})">关闭</button>
+    <button onclick="sendCmd({buzzer_override:0})">恢复自动</button>
+  </div>
+
+  <div class="row">
+    <strong>LED1（风机替身）</strong><br/>
+    <button onclick="sendCmd({led1:1})">LED1 开</button>
+    <button onclick="sendCmd({led1:0})">LED1 关</button>
+  </div>
+
+  <div class="row">
+    <strong>LED2（加热替身）</strong><br/>
+    <button onclick="sendCmd({led2:1})">LED2 开</button>
+    <button onclick="sendCmd({led2:0})">LED2 关</button>
+  </div>
+
+  <h3>返回</h3>
+  <pre id="out">等待操作…</pre>
+
+  <script>
+    async function sendCmd(partial){
+      // 为了简单：只发送你点的字段；没传的保持服务器默认值
+      const res = await fetch('/api/command', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(partial)
+      });
+      document.getElementById('out').textContent = await res.text();
+    }
+  </script>
+</body>
+</html>
